@@ -7,11 +7,17 @@ const setDateBtn = document.getElementById("setDateBtn");
 const resetBtn = document.getElementById("resetBtn");
 const calendarBtn = document.getElementById("calendarBtn");
 const foodSelect = document.getElementById("foodSelect");
+const validationMessage = document.getElementById("validationMessage");
+
+const scheduleYear = 2026;
+const scheduleMonth = 5;
+const safeButtonPadding = 16;
 
 const state = {
   day: null,
   time: null,
-  food: "Pasta"
+  food: "Pasta",
+  timeButtons: new Map()
 };
 
 const times = [
@@ -33,10 +39,17 @@ function showPanel(name) {
   panels.forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.panel === name);
   });
+
+  if (name !== "ask") {
+    noBtn.style.transform = "";
+    noBtn.style.left = "";
+    noBtn.style.top = "";
+    noBtn.classList.remove("runaway");
+  }
 }
 
 function formatDate(day) {
-  const date = new Date(2026, 5, day);
+  const date = new Date(scheduleYear, scheduleMonth, day);
   return new Intl.DateTimeFormat("en", {
     weekday: "long",
     month: "long",
@@ -44,8 +57,93 @@ function formatDate(day) {
   }).format(date);
 }
 
+function getTodayStart() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function getDateForDay(day) {
+  return new Date(scheduleYear, scheduleMonth, day);
+}
+
+function isPastDate(day) {
+  return getDateForDay(day) < getTodayStart();
+}
+
 function validateSchedule() {
-  setDateBtn.disabled = !(state.day && state.time);
+  refreshTimeAvailability();
+  const result = getScheduleValidation();
+  setDateBtn.disabled = !result.valid;
+  validationMessage.textContent = result.message;
+  validationMessage.classList.toggle("error", Boolean(result.error));
+}
+
+function getScheduleValidation() {
+  if (!state.day) {
+    return { valid: false, message: "Choose a date to continue." };
+  }
+
+  if (isPastDate(state.day)) {
+    return { valid: false, error: true, message: "That date has already passed. Pick today or a future date." };
+  }
+
+  if (!state.time) {
+    return { valid: false, message: "Choose a time to continue." };
+  }
+
+  if (isPastTimeForSelectedDate()) {
+    return { valid: false, error: true, message: "That time has already passed today. Pick a later time." };
+  }
+
+  return { valid: true, message: "Perfect. Set the date when you're ready." };
+}
+
+function isPastTimeForSelectedDate() {
+  if (!state.day || !state.time) {
+    return false;
+  }
+
+  const now = new Date();
+  const selectedDate = getDateForDay(state.day);
+  const isToday = selectedDate.toDateString() === now.toDateString();
+
+  if (!isToday) {
+    return false;
+  }
+
+  const parts = timeToParts(state.time);
+  const selectedTime = new Date(scheduleYear, scheduleMonth, state.day, parts.hour, parts.minute);
+  return selectedTime <= now;
+}
+
+function isPastTimeForDate(day, time) {
+  if (!day || !time) {
+    return false;
+  }
+
+  const now = new Date();
+  const selectedDate = getDateForDay(day);
+
+  if (selectedDate.toDateString() !== now.toDateString()) {
+    return false;
+  }
+
+  const parts = timeToParts(time);
+  const selectedTime = new Date(scheduleYear, scheduleMonth, day, parts.hour, parts.minute);
+  return selectedTime <= now;
+}
+
+function refreshTimeAvailability() {
+  state.timeButtons.forEach((button, time) => {
+    const disabled = isPastTimeForDate(state.day, time);
+    button.disabled = disabled;
+    button.title = disabled ? "This time has already passed today" : "";
+
+    if (disabled && state.time === time) {
+      state.time = null;
+      button.classList.remove("selected");
+    }
+  });
 }
 
 function buildCalendar() {
@@ -64,11 +162,21 @@ function buildCalendar() {
     button.className = "day";
     button.textContent = day;
     button.setAttribute("aria-label", formatDate(day));
+    button.disabled = isPastDate(day);
+
+    if (button.disabled) {
+      button.title = "This date has already passed";
+    }
 
     button.addEventListener("click", () => {
+      if (button.disabled) {
+        return;
+      }
+
       state.day = day;
       document.querySelectorAll(".day.selected").forEach((selected) => selected.classList.remove("selected"));
       button.classList.add("selected");
+      refreshTimeAvailability();
       validateSchedule();
     });
 
@@ -82,8 +190,13 @@ function buildTimes() {
     button.type = "button";
     button.className = "chip";
     button.textContent = time;
+    state.timeButtons.set(time, button);
 
     button.addEventListener("click", () => {
+      if (button.disabled) {
+        return;
+      }
+
       state.time = time;
       document.querySelectorAll(".chip.selected").forEach((selected) => selected.classList.remove("selected"));
       button.classList.add("selected");
@@ -96,13 +209,15 @@ function buildTimes() {
 
 function nudgeNoButton() {
   const card = document.querySelector(".date-card");
-  const rect = card.getBoundingClientRect();
-  const buttonRect = noBtn.getBoundingClientRect();
-  const maxX = Math.max(0, rect.width - buttonRect.width - 46);
-  const maxY = Math.max(0, rect.height - buttonRect.height - 46);
-  const x = Math.round(Math.random() * maxX - maxX / 2);
-  const y = Math.round(Math.random() * maxY - maxY / 2);
-  noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random() > 0.5 ? 4 : -4}deg)`;
+  const maxX = Math.max(safeButtonPadding, card.clientWidth - noBtn.offsetWidth - safeButtonPadding);
+  const maxY = Math.max(safeButtonPadding, card.clientHeight - noBtn.offsetHeight - safeButtonPadding);
+  const x = Math.round(safeButtonPadding + Math.random() * (maxX - safeButtonPadding));
+  const y = Math.round(safeButtonPadding + Math.random() * (maxY - safeButtonPadding));
+
+  noBtn.classList.add("runaway");
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+  noBtn.style.transform = "none";
 }
 
 function updateSummary() {
@@ -173,6 +288,11 @@ foodSelect.addEventListener("change", (event) => {
 });
 
 setDateBtn.addEventListener("click", () => {
+  if (!getScheduleValidation().valid) {
+    validateSchedule();
+    return;
+  }
+
   updateSummary();
   showPanel("confirm");
 });
@@ -182,3 +302,4 @@ calendarBtn.addEventListener("click", downloadInvite);
 
 buildCalendar();
 buildTimes();
+validateSchedule();

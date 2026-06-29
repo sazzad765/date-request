@@ -148,6 +148,21 @@ h2 {
   font-weight: 700;
 }
 
+#noBtn {
+  will-change: transform;
+}
+
+#noBtn.runaway {
+  position: absolute;
+  z-index: 3;
+  transform: none;
+}
+
+#noBtn.runaway:hover,
+#noBtn.runaway:focus {
+  transform: none;
+}
+
 .wide {
   width: 100%;
   margin-top: 22px;
@@ -211,6 +226,17 @@ h2 {
   background: var(--berry);
 }
 
+.day:disabled {
+  color: rgba(126, 95, 105, 0.42);
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.day:disabled:hover {
+  color: rgba(126, 95, 105, 0.42);
+  background: transparent;
+}
+
 .day.blank {
   visibility: hidden;
 }
@@ -246,6 +272,13 @@ h2 {
   background: var(--berry);
 }
 
+.chip:disabled {
+  color: rgba(126, 95, 105, 0.44);
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.42);
+  text-decoration: line-through;
+}
+
 .food-select {
   width: 100%;
   height: 46px;
@@ -255,6 +288,19 @@ h2 {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.74);
   outline: none;
+}
+
+.validation-message {
+  min-height: 20px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.validation-message.error {
+  color: var(--berry-dark);
 }
 
 .summary-card {
