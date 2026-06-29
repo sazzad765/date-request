@@ -1,0 +1,324 @@
+:root {
+  --ink: #5a2236;
+  --muted: #7e5f69;
+  --berry: #c42d70;
+  --berry-dark: #9d1f57;
+  --petal: #fff6f8;
+  --line: rgba(111, 48, 75, 0.16);
+  --shadow: 0 28px 80px rgba(108, 39, 73, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    linear-gradient(rgba(255, 246, 249, 0.58), rgba(255, 246, 249, 0.72)),
+    url("./assets/romantic-bg.png") center / cover fixed;
+}
+
+button,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+}
+
+.date-card {
+  position: relative;
+  width: min(100%, 430px);
+  min-height: 430px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+}
+
+.panel {
+  display: none;
+  min-height: 430px;
+  padding: 38px 30px;
+  text-align: center;
+}
+
+.panel.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: rise 360ms ease both;
+}
+
+.tiny {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.98;
+}
+
+h1 {
+  font-size: clamp(2.8rem, 14vw, 4.6rem);
+}
+
+h2 {
+  font-size: clamp(2.4rem, 11vw, 3.55rem);
+}
+
+.soft-copy,
+.final-copy {
+  margin: 18px auto 0;
+  max-width: 29ch;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.choice-row,
+.final-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.ghost-btn,
+.icon-btn {
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.primary-btn {
+  min-width: 148px;
+  padding: 13px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--berry), #dd5d98);
+  box-shadow: 0 12px 24px rgba(196, 45, 112, 0.28);
+  font-weight: 800;
+}
+
+.primary-btn:hover,
+.ghost-btn:hover,
+.icon-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.primary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+  transform: none;
+  box-shadow: none;
+}
+
+.ghost-btn {
+  min-width: 98px;
+  padding: 12px 20px;
+  color: var(--berry-dark);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--line);
+  font-weight: 700;
+}
+
+.wide {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.calendar-card {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--line);
+}
+
+.icon-btn:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.weekdays {
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.day {
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.day:hover,
+.day.selected {
+  color: #fff;
+  background: var(--berry);
+}
+
+.day.blank {
+  visibility: hidden;
+}
+
+.field-label {
+  display: block;
+  margin: 18px 0 10px;
+  color: var(--muted);
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.chip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.chip {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.chip.selected {
+  color: #fff;
+  border-color: var(--berry);
+  background: var(--berry);
+}
+
+.food-select {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+  outline: none;
+}
+
+.summary-card {
+  display: grid;
+  gap: 10px;
+  margin: 28px auto 0;
+  padding: 18px;
+  max-width: 310px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.64);
+  text-align: left;
+}
+
+.summary-card p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(196, 45, 112, 0.65) 0 2px, transparent 3px),
+    radial-gradient(circle at 76% 22%, rgba(234, 152, 183, 0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 86% 72%, rgba(186, 127, 50, 0.52) 0 2px, transparent 3px),
+    radial-gradient(circle at 24% 80%, rgba(196, 45, 112, 0.52) 0 2px, transparent 3px);
+  opacity: 0.65;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 460px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  .date-card,
+  .panel {
+    min-height: calc(100vh - 28px);
+  }
+
+  .panel {
+    padding: 30px 20px;
+  }
+
+  .chip-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .primary-btn,
+  .ghost-btn {
+    min-width: 0;
+  }
+}

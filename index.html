@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Date Request</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="date-card" aria-live="polite">
+        <section class="panel active" data-panel="ask">
+          <p class="tiny">Important and confidential</p>
+          <h1>Will you go on a date with me?</h1>
+          <p class="soft-copy">I made this tiny website because asking normally felt too easy.</p>
+          <div class="choice-row">
+            <button class="primary-btn" id="yesBtn" type="button">Yes <span>♥</span></button>
+            <button class="ghost-btn" id="noBtn" type="button">No</button>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="schedule">
+          <p class="tiny">Pick the perfect slot</p>
+          <h2>So... when are you free?</h2>
+          <div class="calendar-card">
+            <div class="calendar-head">
+              <button class="icon-btn" type="button" aria-label="Previous month" disabled>‹</button>
+              <strong>June 2026</strong>
+              <button class="icon-btn" type="button" aria-label="Next month" disabled>›</button>
+            </div>
+            <div class="weekdays" aria-hidden="true">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="days" id="daysGrid" aria-label="Choose a date"></div>
+          </div>
+
+          <label class="field-label" for="timeGrid">What time?</label>
+          <div class="chip-grid" id="timeGrid"></div>
+
+          <label class="field-label" for="foodSelect">Dinner plan</label>
+          <select id="foodSelect" class="food-select">
+            <option>Pasta</option>
+            <option>Pizza</option>
+            <option>Sushi</option>
+            <option>Biryani</option>
+            <option>Coffee and dessert</option>
+          </select>
+
+          <button class="primary-btn wide" id="setDateBtn" type="button" disabled>Set the date <span>♥</span></button>
+        </section>
+
+        <section class="panel" data-panel="confirm">
+          <div class="confetti" aria-hidden="true"></div>
+          <p class="tiny">Date accepted</p>
+          <h2>YAY!! 💕</h2>
+          <div class="summary-card">
+            <p><span>📅</span><strong id="summaryDate">Friday, June 26</strong></p>
+            <p><span>⏰</span><strong id="summaryTime">8:00 PM</strong></p>
+            <p><span>🍽</span><strong id="summaryFood">Pasta</strong></p>
+          </div>
+          <p class="final-copy">I can't wait to see you! 🌹✨</p>
+          <div class="final-actions">
+            <button class="ghost-btn" id="resetBtn" type="button">Change details</button>
+            <button class="primary-btn" id="calendarBtn" type="button">Download invite</button>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
