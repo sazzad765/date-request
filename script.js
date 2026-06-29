@@ -8,11 +8,16 @@ const resetBtn = document.getElementById("resetBtn");
 const calendarBtn = document.getElementById("calendarBtn");
 const foodSelect = document.getElementById("foodSelect");
 const validationMessage = document.getElementById("validationMessage");
+const askTitle = document.getElementById("askTitle");
+const askCopy = document.getElementById("askCopy");
+const scheduleTitle = document.getElementById("scheduleTitle");
+const finalCopy = document.getElementById("finalCopy");
 
 const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwu5ySE3Rg1wAg_GGu0z9EyUqQWvgxdujxINHfOLhhu_lwOjc5JruZ52MqafJOk43T6/exec";
 const scheduleYear = 2026;
 const scheduleMonth = 5;
 const safeButtonPadding = 16;
+const recipientName = getRecipientName();
 
 const state = {
   day: null,
@@ -37,6 +42,33 @@ const times = [
   "8:30 PM"
 ];
 
+function getRecipientName() {
+  const params = new URLSearchParams(window.location.search);
+  const rawName = (params.get("name") || "").trim();
+
+  if (!rawName) {
+    return "";
+  }
+
+  return rawName
+    .replace(/[-_]+/g, " ")
+    .replace(/[^\p{L}\p{N}\s'.-]/gu, "")
+    .replace(/\s+/g, " ")
+    .slice(0, 40)
+    .replace(/\b\p{L}/gu, (letter) => letter.toLocaleUpperCase());
+}
+
+function applyRecipientName() {
+  if (!recipientName) {
+    return;
+  }
+
+  askTitle.textContent = `${recipientName}, will you go on a date with me?`;
+  askCopy.textContent = `I made this tiny website for you because asking normally felt too easy.`;
+  scheduleTitle.textContent = `So... ${recipientName}, when are you free?`;
+  finalCopy.textContent = `I can't wait to see you, ${recipientName}! 🌹✨`;
+}
+
 function getSessionId() {
   const key = "dateRequestSessionId";
   const existing = localStorage.getItem(key);
@@ -58,6 +90,7 @@ function trackEvent(eventName, details = {}) {
   const payload = {
     event: eventName,
     sessionId: state.sessionId,
+    recipientName,
     page: window.location.href,
     userAgent: navigator.userAgent,
     selectedDate: state.day ? formatDate(state.day) : "",
@@ -358,6 +391,7 @@ calendarBtn.addEventListener("click", () => {
   downloadInvite();
 });
 
+applyRecipientName();
 buildCalendar();
 buildTimes();
 validateSchedule();

@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Date Request</title>
-    <link rel="stylesheet" href="./styles.css?v=sheet-tracking">
+    <link rel="stylesheet" href="./styles.css?v=name-support">
   </head>
   <body>
     <div class="app-shell">
       <main class="date-card" aria-live="polite">
         <section class="panel active" data-panel="ask">
           <p class="tiny">Important and confidential</p>
-          <h1>Will you go on a date with me?</h1>
-          <p class="soft-copy">I made this tiny website because asking normally felt too easy.</p>
+          <h1 id="askTitle">Will you go on a date with me?</h1>
+          <p class="soft-copy" id="askCopy">I made this tiny website because asking normally felt too easy.</p>
           <div class="choice-row">
             <button class="primary-btn" id="yesBtn" type="button">Yes <span>♥</span></button>
             <button class="ghost-btn" id="noBtn" type="button">No</button>
@@ -21,7 +21,7 @@
 
         <section class="panel" data-panel="schedule">
           <p class="tiny">Pick the perfect slot</p>
-          <h2>So... when are you free?</h2>
+          <h2 id="scheduleTitle">So... when are you free?</h2>
           <div class="calendar-card">
             <div class="calendar-head">
               <button class="icon-btn" type="button" aria-label="Previous month" disabled>‹</button>
@@ -59,7 +59,7 @@
             <p><span>⏰</span><strong id="summaryTime">8:00 PM</strong></p>
             <p><span>🍽</span><strong id="summaryFood">Pasta</strong></p>
           </div>
-          <p class="final-copy">I can't wait to see you! 🌹✨</p>
+          <p class="final-copy" id="finalCopy">I can't wait to see you! 🌹✨</p>
           <div class="final-actions">
             <button class="ghost-btn" id="resetBtn" type="button">Change details</button>
             <button class="primary-btn" id="calendarBtn" type="button">Download invite</button>
@@ -67,6 +67,6 @@
         </section>
       </main>
     </div>
-    <script src="./script.js?v=sheet-tracking"></script>
+    <script src="./script.js?v=name-support"></script>
   </body>
 </html>
