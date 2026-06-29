@@ -1,5 +1,3 @@
-const SHEET_NAME = "Clicks";
-
 function doPost(e) {
   const sheet = getSheet();
   const data = JSON.parse(e.postData.contents || "{}");
@@ -35,8 +33,9 @@ function doPost(e) {
 }
 
 function getSheet() {
+  const sheetName = getSheetName();
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+  let sheet = spreadsheet.getSheetByName(sheetName);
   const headers = [
     "Timestamp",
     "Event",
@@ -63,7 +62,7 @@ function getSheet() {
   ];
 
   if (!sheet) {
-    sheet = spreadsheet.insertSheet(SHEET_NAME);
+    sheet = spreadsheet.insertSheet(sheetName);
     sheet.appendRow(headers);
     return sheet;
   }
@@ -77,4 +76,8 @@ function getSheet() {
   }
 
   return sheet;
+}
+
+function getSheetName() {
+  return "Clicks";
 }
