@@ -9,6 +9,7 @@ const calendarBtn = document.getElementById("calendarBtn");
 const foodSelect = document.getElementById("foodSelect");
 const validationMessage = document.getElementById("validationMessage");
 
+const GOOGLE_SHEET_WEB_APP_URL = "";
 const scheduleYear = 2026;
 const scheduleMonth = 5;
 const safeButtonPadding = 16;
@@ -17,6 +18,7 @@ const state = {
   day: null,
   time: null,
   food: "Pasta",
+  sessionId: getSessionId(),
   timeButtons: new Map()
 };
 
@@ -34,6 +36,47 @@ const times = [
   "8:00 PM",
   "8:30 PM"
 ];
+
+function getSessionId() {
+  const key = "dateRequestSessionId";
+  const existing = localStorage.getItem(key);
+
+  if (existing) {
+    return existing;
+  }
+
+  const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  localStorage.setItem(key, id);
+  return id;
+}
+
+function trackEvent(eventName, details = {}) {
+  if (!GOOGLE_SHEET_WEB_APP_URL) {
+    return;
+  }
+
+  const payload = {
+    event: eventName,
+    sessionId: state.sessionId,
+    page: window.location.href,
+    userAgent: navigator.userAgent,
+    selectedDate: state.day ? formatDate(state.day) : "",
+    selectedTime: state.time || "",
+    selectedFood: state.food || "",
+    ...details
+  };
+
+  fetch(GOOGLE_SHEET_WEB_APP_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(payload)
+  }).catch(() => {
+    // Tracking should never interrupt the date request flow.
+  });
+}
 
 function showPanel(name) {
   panels.forEach((panel) => {
@@ -176,6 +219,7 @@ function buildCalendar() {
       button.classList.add("selected");
       refreshTimeAvailability();
       validateSchedule();
+      trackEvent("date_selected", { day, date: formatDate(day) });
     });
 
     daysGrid.append(button);
@@ -199,13 +243,14 @@ function buildTimes() {
       document.querySelectorAll(".chip.selected").forEach((selected) => selected.classList.remove("selected"));
       button.classList.add("selected");
       validateSchedule();
+      trackEvent("time_selected", { time });
     });
 
     timeGrid.append(button);
   });
 }
 
-function nudgeNoButton() {
+function nudgeNoButton(shouldTrack = false) {
   const zone = noBtn.closest(".choice-row");
   const maxX = Math.max(safeButtonPadding, zone.clientWidth - noBtn.offsetWidth - safeButtonPadding);
   const maxY = Math.max(safeButtonPadding, zone.clientHeight - noBtn.offsetHeight - safeButtonPadding);
@@ -214,6 +259,10 @@ function nudgeNoButton() {
 
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
+
+  if (shouldTrack) {
+    trackEvent("no_clicked", { x, y });
+  }
 }
 
 function updateSummary() {
@@ -277,25 +326,39 @@ function downloadInvite() {
 yesBtn.addEventListener("click", () => showPanel("schedule"));
 noBtn.addEventListener("mouseenter", nudgeNoButton);
 noBtn.addEventListener("focus", nudgeNoButton);
-noBtn.addEventListener("click", nudgeNoButton);
+noBtn.addEventListener("click", () => nudgeNoButton(true));
+
+yesBtn.addEventListener("click", () => {
+  trackEvent("yes_clicked");
+});
 
 foodSelect.addEventListener("change", (event) => {
   state.food = event.target.value;
+  trackEvent("food_changed", { food: state.food });
 });
 
 setDateBtn.addEventListener("click", () => {
   if (!getScheduleValidation().valid) {
+    trackEvent("invalid_submit_attempt", { message: validationMessage.textContent });
     validateSchedule();
     return;
   }
 
   updateSummary();
   showPanel("confirm");
+  trackEvent("date_confirmed");
 });
 
-resetBtn.addEventListener("click", () => showPanel("schedule"));
-calendarBtn.addEventListener("click", downloadInvite);
+resetBtn.addEventListener("click", () => {
+  showPanel("schedule");
+  trackEvent("change_details_clicked");
+});
+calendarBtn.addEventListener("click", () => {
+  trackEvent("download_invite_clicked");
+  downloadInvite();
+});
 
 buildCalendar();
 buildTimes();
 validateSchedule();
+trackEvent("page_loaded");
