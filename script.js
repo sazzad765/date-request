@@ -9,7 +9,7 @@ const calendarBtn = document.getElementById("calendarBtn");
 const foodSelect = document.getElementById("foodSelect");
 const validationMessage = document.getElementById("validationMessage");
 
-const GOOGLE_SHEET_WEB_APP_URL = "";
+const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwu5ySE3Rg1wAg_GGu0z9EyUqQWvgxdujxINHfOLhhu_lwOjc5JruZ52MqafJOk43T6/exec";
 const scheduleYear = 2026;
 const scheduleMonth = 5;
 const safeButtonPadding = 16;
