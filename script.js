@@ -41,10 +41,8 @@ function showPanel(name) {
   });
 
   if (name !== "ask") {
-    noBtn.style.transform = "";
     noBtn.style.left = "";
     noBtn.style.top = "";
-    noBtn.classList.remove("runaway");
   }
 }
 
@@ -208,16 +206,14 @@ function buildTimes() {
 }
 
 function nudgeNoButton() {
-  const card = document.querySelector(".date-card");
-  const maxX = Math.max(safeButtonPadding, card.clientWidth - noBtn.offsetWidth - safeButtonPadding);
-  const maxY = Math.max(safeButtonPadding, card.clientHeight - noBtn.offsetHeight - safeButtonPadding);
+  const zone = noBtn.closest(".choice-row");
+  const maxX = Math.max(safeButtonPadding, zone.clientWidth - noBtn.offsetWidth - safeButtonPadding);
+  const maxY = Math.max(safeButtonPadding, zone.clientHeight - noBtn.offsetHeight - safeButtonPadding);
   const x = Math.round(safeButtonPadding + Math.random() * (maxX - safeButtonPadding));
   const y = Math.round(safeButtonPadding + Math.random() * (maxY - safeButtonPadding));
 
-  noBtn.classList.add("runaway");
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
-  noBtn.style.transform = "none";
 }
 
 function updateSummary() {
