@@ -20,7 +20,13 @@ function doPost(e) {
     data.y || "",
     data.message || "",
     data.page || "",
-    data.userAgent || ""
+    data.userAgent || "",
+    data.locationStatus || "",
+    data.latitude || "",
+    data.longitude || "",
+    data.locationAccuracy || "",
+    data.locationTimestamp || "",
+    data.locationError || ""
   ]);
 
   return ContentService
@@ -31,27 +37,43 @@ function doPost(e) {
 function getSheet() {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+  const headers = [
+    "Timestamp",
+    "Event",
+    "Session ID",
+    "Recipient Name",
+    "Selected Date",
+    "Selected Time",
+    "Selected Food",
+    "Day",
+    "Date",
+    "Time",
+    "Food",
+    "No Button X",
+    "No Button Y",
+    "Message",
+    "Page",
+    "User Agent",
+    "Location Status",
+    "Latitude",
+    "Longitude",
+    "Location Accuracy",
+    "Location Timestamp",
+    "Location Error"
+  ];
 
   if (!sheet) {
     sheet = spreadsheet.insertSheet(SHEET_NAME);
-    sheet.appendRow([
-      "Timestamp",
-      "Event",
-      "Session ID",
-      "Recipient Name",
-      "Selected Date",
-      "Selected Time",
-      "Selected Food",
-      "Day",
-      "Date",
-      "Time",
-      "Food",
-      "No Button X",
-      "No Button Y",
-      "Message",
-      "Page",
-      "User Agent"
-    ]);
+    sheet.appendRow(headers);
+    return sheet;
+  }
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+  } else if (sheet.getLastColumn() < headers.length) {
+    sheet
+      .getRange(1, 1, 1, headers.length)
+      .setValues([headers]);
   }
 
   return sheet;

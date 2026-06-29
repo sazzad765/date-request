@@ -111,6 +111,49 @@ function trackEvent(eventName, details = {}) {
   });
 }
 
+function getUserLocation() {
+  return new Promise((resolve) => {
+    if (!("geolocation" in navigator)) {
+      resolve({ locationStatus: "unavailable" });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          locationStatus: "granted",
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          locationAccuracy: Math.round(position.coords.accuracy),
+          locationTimestamp: new Date(position.timestamp).toISOString()
+        });
+      },
+      (error) => {
+        const statusByCode = {
+          1: "denied",
+          2: "unavailable",
+          3: "timeout"
+        };
+
+        resolve({
+          locationStatus: statusByCode[error.code] || "error",
+          locationError: error.message || ""
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    );
+  });
+}
+
+async function trackDateConfirmed() {
+  const locationDetails = await getUserLocation();
+  trackEvent("date_confirmed", locationDetails);
+}
+
 function showPanel(name) {
   panels.forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.panel === name);
@@ -379,7 +422,7 @@ setDateBtn.addEventListener("click", () => {
 
   updateSummary();
   showPanel("confirm");
-  trackEvent("date_confirmed");
+  trackDateConfirmed();
 });
 
 resetBtn.addEventListener("click", () => {
