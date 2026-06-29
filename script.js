@@ -13,7 +13,7 @@ const askCopy = document.getElementById("askCopy");
 const scheduleTitle = document.getElementById("scheduleTitle");
 const finalCopy = document.getElementById("finalCopy");
 
-const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyI2mmHbeWw8AXeM-L3qt6DvNKGKeUIh67nrba10sBHeG-S4jqcw5_ZY1f9ew2x-w2t/exec";
+const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyxB7JQwx3wXHT7fwWwpXz5XgSxyWoxVvXjwHngxb-tyK4QUVKB6sDARKrzoJ1ar8N9/exec";
 const scheduleYear = 2026;
 const scheduleMonth = 5;
 const safeButtonPadding = 16;
